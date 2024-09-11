@@ -1,0 +1,9 @@
+flask
+torch
+torchvision
+numpy
+pillow
+typing
+requests
+matplotlib
+docker

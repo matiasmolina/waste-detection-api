@@ -1,0 +1,31 @@
+#Example
+docker build -t waste-classifier .
+docker run -p 5000:5000 waste-classifier
+
+
+#Build and Run (with deployment image)
+
+#We only send the lat and long. The rest of the arguments will be set by default.
+curl -X POST -H "Content-Type: application/json" -d '{"latitude": -34.82929722222222 "longitude":-58.40813611111111}' http://localhost:5000/predict > output.txt
+
+# Read the output as image (you can also explore rest of the response)
+import json
+import base64
+from PIL import Image
+import io
+
+def image_bytes_to_numpy(image_bytes: bytes) -> np.ndarray:
+    image = Image.open(io.BytesIO(image_bytes))
+    image = image.convert('RGB')
+    image = np.array(image)
+    return image
+
+f = open('output.txt')
+content = f.read()
+
+cnt = json.loads(content)
+img_bytes = base64.b64decode(cnt['data']['image'])
+arr = image_bytes_to_numpy(img_bytes)
+im = Image.fromarray(arr)
+im.save('output.png')
+# Check the saved image.
